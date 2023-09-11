@@ -1,6 +1,6 @@
 //Importation des modules nécessaires
 const User = require('../models/User');
-const { userResponseParser } = require('../utils/userResponseParser')
+const { userResponseParser } = require('../utils/UserResponseParser')
 
 
 
