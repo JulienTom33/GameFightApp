@@ -33,7 +33,7 @@ const Register = () => {
     </form>
     <div>
         <p>Already have an account?
-            <Link to="/login">Login</Link>
+            <Link to="/login"><button>Login</button></Link>
         </p>
     </div>
         </div>

@@ -5,8 +5,8 @@ const Start = () => {
     return (
       <div>
         <h1>Battle Arena</h1>
-        <Link to="/login">Login</Link>
-        <Link to="/register">Register</Link>
+        <Link to="/login"><button>Login</button></Link>
+        <Link to="/register"><button>Register</button></Link>
       </div>
     );
   };
