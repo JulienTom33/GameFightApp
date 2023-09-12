@@ -17,17 +17,12 @@ router.get('/', (req, res) => {
 // Routes liées à l'authentification
 //================
 
-// Route pour afficher le formulaire d'inscription
-router.get('/register', authController.getRegister, redirectIfLoggedIn);
 
 // Route pour soumettre le formulaire d'inscription
-router.post('/register', authController.postRegister, redirectIfLoggedIn);
-
-// Route pour afficher le formulaire de connexion
-router.get('/login', authController.getLogin, redirectIfLoggedIn);
+router.post('/register', authController.register, redirectIfLoggedIn);
 
 // Route pour soumettre le formulaire de connexion
-router.post('/login', authController.postLogin, redirectIfLoggedIn);
+router.post('/login', authController.login, redirectIfLoggedIn);
 
 // Route pour se déconnecter
 router.get('/logout', authController.logout);

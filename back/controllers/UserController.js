@@ -14,7 +14,7 @@ exports.getProfil = async (req, res) => {
             return res.status(404).json({error: 'Utilisateur non trouvé'});
         }
         // si l'utilisateur existe, on renvoie ses données
-        res.render('profile', {user: userResponseParser(user)});
+        res.render('home', {user: userResponseParser(user)});
 
     } catch (error) {
         console.error(error);
@@ -33,7 +33,7 @@ exports.updateProfil = async (req, res) => {
         await User.findByIdAndUpdate(req.user.userId, {username, email});
 
         // Rediriger l'utilisateur vers la page profil
-        res.redirect('/pages/profile');
+        res.redirect('/profile');
 
     } catch (error) {
         console.error(error);
@@ -47,7 +47,7 @@ exports.deleteProfil = async (req, res) => {
     try {
         //Supprimer l'utilisateur en fonction de son id stocké dans le cookie
         await User.findByIdAndDelete(req.user.userId);
-        res.redirect('/pages/register');
+        res.redirect('/');
     }
     catch (error) {
         console.error(error);
