@@ -34,7 +34,7 @@ router.get('/logout', authController.logout);
 //================
 
 // Route pour afficher le profil de l'utilisateur
-router.get('/profile', userController.getProfil, isLoggedIn);
+router.get('/user', userController.getUser, isLoggedIn);
 
 // Route pour modifier le profil de l'utilisateur
 router.post('/profile', userController.updateProfil, isLoggedIn);

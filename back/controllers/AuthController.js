@@ -2,6 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const bcryptjs = require('bcryptjs');
+const session = require('express-session');
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -45,103 +46,138 @@ exports.register = async (req, res) => {
        });
      });
     };
+
+exports.login = async (req, res) => {
+
+      // check if email exists
+      User.findOne({ email: req.body.email })      
+        
+        // if email exists
+        .then((user) => {
+          // compare the password entered and the hashed password found
+          bcryptjs
+            .compare(req.body.password, user.password)
+        
+            // if the passwords match
+            .then((passwordCheck) => {
+        
+              // check if user is already connected
+              if (req.user) {
+                return res.status(400).send({
+                  message: "User is already connected",
+                  error: null,
+                });
+              }
+        
+              const token = jwt.sign(
+                {
+                    userId: user._id,
+                    email: user.email
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
+              );  
+                  
+              req.session.token = token;                
+  
+              res.cookie('token', token, {
+                  expire: new Date(Date.now() + 7200000), // expiration dans 2 heures
+                  httpOnly: true,
+                  secure: true // à activer si HTTPS
+              });
+        
+              //   return success response
+              res.status(200).send({
+                message: "Login Successful",
+                email: user.email,
+                username: user.username,
+                token,
+              });
+            })
+            // catch error if password does not match
+            .catch((error) => {
+              res.status(400).send({
+                message: "Passwords does not match",
+                error,
+              });
+            });
+        })
+        // catch error if email does not exist
+        .catch((e) => {
+          res.status(404).send({
+            message: "Email not found",
+            e,
+          });
+        });
+  };
    
     
-    exports.login = async (req, res) => {
-        // check if email exists
-        User.findOne({ email: req.body.email })
-      
-          // if email exists
-          .then((user) => {
-            // compare the password entered and the hashed password found
-            bcryptjs
-              .compare(req.body.password, user.password)
-      
-              // if the passwords match
-              .then((passwordCheck) => {
-      
-                // check if password matches
-                if(!passwordCheck) {
-                  return response.status(400).send({
-                    message: "Passwords does not match",
-                    error,
-                  });
-                }
-      
-                const token = jwt.sign(
-                    {
-                        userId: user._id,
-                        username: user.username
-                    },
-                    process.env.JWT_SECRET,
-                    { expiresIn: '24h' }
-                );
-
-                res.cookie('token', token, {
-                    expire: new Date(Date.now() + 7200000), // expiration dans 2 heures
-                    httpOnly: true,
-                    secure: true // à activer si HTTPS
-                });
-      
-                //   return success response
-                res.status(200).send({
-                  message: "Login Successful",
-                  email: user.email,
-                  token,
-                });
-              })
-              // catch error if password does not match
-              .catch((error) => {
-                res.status(400).send({
-                  message: "Passwords does not match",
-                  error,
-                });
-              });
-          })
-          // catch error if email does not exist
-          .catch((e) => {
-            res.status(404).send({
-              message: "Email not found",
-              e,
-            });
-          });
-      };
-
-// // Méthode pour traiter les données du formulaire de connexion
 // exports.login = async (req, res) => {
-//     try {
-//         const user = await User.findOne({ email: req.body.email });
 
-//         if (user && (await bcryptjs.compare(req.body.password, user.password))) {
-//             // Créez le token comme vous le faites déjà
-//             const token = jwt.sign(
-//                 {
-//                     userId: user._id,
-//                     username: user.username
-//                 },
-//                 process.env.JWT_SECRET,
-//                 { expiresIn: '2h' }
-//             );
+//         // check if email exists
+//         User.findOne({ email: req.body.email })      
+      
+//           // if email exists
+//           .then((user) => {
+//             // compare the password entered and the hashed password found
+//             bcryptjs
+//               .compare(req.body.password, user.password)
+      
+//               // if the passwords match
+//               .then((passwordCheck) => {
+      
+//                 // check if password matches
+//                 if(!passwordCheck) {
+//                   return response.status(400).send({
+//                     message: "Passwords does not match",
+//                     error,
+//                   });
+//                 }
+      
+//                 const token = jwt.sign(
+//                     {
+//                         userId: user._id,
+//                         email: user.email
+//                     },
+//                     process.env.JWT_SECRET,
+//                     { expiresIn: '24h' }
+//                 );  
+                
+//                 req.session.token = token;                
 
-//             res.cookie('token', token, {
-//                 expire: new Date(Date.now() + 7200000), // expiration dans 2 heures
-//                 httpOnly: true,
-//                 secure: true // à activer si HTTPS
+//                 res.cookie('token', token, {
+//                     expire: new Date(Date.now() + 7200000), // expiration dans 2 heures
+//                     httpOnly: true,
+//                     secure: true // à activer si HTTPS
+//                 });
+      
+//                 //   return success response
+//                 res.status(200).send({
+//                   message: "Login Successful",
+//                   email: user.email,
+//                   username: user.username,
+//                   token,
+//                 });
+//               })
+//               // catch error if password does not match
+//               .catch((error) => {
+//                 res.status(400).send({
+//                   message: "Passwords does not match",
+//                   error,
+//                 });
+//               });
+//           })
+//           // catch error if email does not exist
+//           .catch((e) => {
+//             res.status(404).send({
+//               message: "Email not found",
+//               e,
 //             });
-
-//             // // Redirigez l'utilisateur vers la page de profil
-//             // res.redirect('/profile');
-//         } else {
-//             res.redirect('/login');
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         res.redirect('/login');
-//     }
-// };
+//           });
+//       };
 
 // Méthode pour se déconnecter
 exports.logout = (req, res) => {
     res.clearCookie('token'); // supprime le cookie token
-    res.redirect('/login');
+    res.redirect('/');
 }

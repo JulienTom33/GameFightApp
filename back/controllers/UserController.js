@@ -1,20 +1,25 @@
-//Importation des modules nécessaires
+// Importation des modules nécessaires
 const User = require('../models/User');
 const { userResponseParser } = require('../utils/UserResponseParser')
 
 
 
 // Function pour récupérer le profil de l'utilisateur
-exports.getProfil = async (req, res) => {
+exports.getUser = async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     try {
-        // Chereche l'utilisateur en fonction de son id stocké dans le cookie
-        const user = await User.findById(req.user.userId);
+        const user = await User.findById(req.user.id);
+        console.log(user)        
+
+        // Vous pouvez maintenant renvoyer les informations de l'utilisateur
         //si l'utilisateur n'existe pas, on renvoie une erreur
         if (!user) {
             return res.status(404).json({error: 'Utilisateur non trouvé'});
         }
-        // si l'utilisateur existe, on renvoie ses données
-        res.render('home', {user: userResponseParser(user)});
+        res.status(200).json({ user });        
 
     } catch (error) {
         console.error(error);
@@ -23,6 +28,8 @@ exports.getProfil = async (req, res) => {
 
     }
 };
+
+
         
 // Function pour modifier le profil de l'utilisateur
 exports.updateProfil = async (req, res) => {
