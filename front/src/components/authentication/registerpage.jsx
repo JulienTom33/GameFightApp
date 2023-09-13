@@ -4,10 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Form, Button } from "react-bootstrap";
 
-const Register = () => {
-
-    const [firstname, setFirstname] = useState("");
-    const [lastname, setLastname] = useState("");
+const Register = () => {    
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -23,9 +20,7 @@ const Register = () => {
         const configuration = {
             method: "post",
             url: "http://localhost:3000/register",
-            data: {
-                firstname,
-                lastname,
+            data: {                
                 username,
                 email,
                 password,
@@ -50,27 +45,7 @@ const Register = () => {
         {/* Afficher un message d'erreur s'il y en a un */}
         {errorMessage && <p className="text-danger">{errorMessage}</p>}
              <h2>Register</h2>
-      <Form onSubmit={(e)=>handleSubmit(e)}>
-        {/* firstname */}
-        <Form.Group controlId="formBasicFirtsname">
-          <Form.Label>Firtsname</Form.Label>
-          <Form.Control 
-            type="firtsname" 
-            placeholder="Enter firtsname"
-            value={firstname}
-            onChange={(e) => setFirstname(e.target.value)}
-             />
-        </Form.Group>
-        {/* lastname */}
-        <Form.Group controlId="formBasicLastname">
-          <Form.Label>Lastname</Form.Label>
-          <Form.Control 
-            type="lastname" 
-            placeholder="Enter lastname"
-            value={lastname}
-            onChange={(e) => setLastname(e.target.value)}
-             />
-        </Form.Group>
+      <Form onSubmit={(e)=>handleSubmit(e)}>        
         {/* username */}
         <Form.Group controlId="formBasicUsername">
           <Form.Label>Username</Form.Label>
@@ -109,14 +84,7 @@ const Register = () => {
             type="submit"
             onClick={(e) => handleSubmit(e)}>
           Submit
-        </Button>
-
-         {/* display success message */}
-         {register ? (
-          <p className="text-success">You Are Registered Successfully</p>
-        ) : (
-          <p className="text-danger">You Are Not Registered</p>
-        )}
+        </Button>       
 
       </Form>
         </>
